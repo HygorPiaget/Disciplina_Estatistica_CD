@@ -35,17 +35,16 @@
 <body>
 <h1>Aula 3 - Estatística para Ciência de Dados</h1>
 <p>Bem-vindo à terceira aula do curso. Nesta aula, aprofundamos o estudo de distribuições, medidas estatísticas e visualizações úteis para compreender conjuntos de dados reais.</p>
-<h1>Aula 3 – Distribuições Estatísticas e Teorema do Limite Central</h1>
+<h1>Distribuições Estatísticas e Teorema do Limite Central</h1>
 <p>Nesta aula prática, vamos explorar os conceitos fundamentais das distribuições estatísticas, com foco na distribuição normal e no Teorema do Limite Central. </p>
 <p>Vamos utilizar simulações para entender os comportamentos típicos de distribuições discretas e contínuas, além de aplicar a padronização e calcular o erro padrão.</p>
 <h2>Parte 1 – Distribuições Discretas (Exemplo com Dados)</h2>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'>import numpy as np
 import matplotlib.pyplot as plt
 
 # Simulação de lançamento de 1 dado
 np.random.seed(42)
-dado = np.random.randint(1, 7, size=10000) # O que muda se mudar o tamanho do size?
+dado = np.random.randint(1, 7, size=10000) # O que muda se modificar o tamanho do size?
 
 plt.hist(dado, bins=np.arange(0.5, 7.5, 1), edgecolor='black', rwidth=0.9)
 plt.title('Distribuição do lançamento de 1 dado (10000 vezes)')
@@ -55,7 +54,6 @@ plt.grid(True)
 plt.show()</code></pre>
 <pre><code><Figure size 640x480 with 1 Axes></code></pre>
 <img src="images/output_0.png" alt="Figura da célula 3">
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'># Lançamento de 2 dados e soma dos valores
 dado1 = np.random.randint(1, 7, size=10000)
 dado2 = np.random.randint(1, 7, size=10000)
@@ -70,7 +68,6 @@ plt.show()</code></pre>
 <pre><code><Figure size 640x480 with 1 Axes></code></pre>
 <img src="images/output_1.png" alt="Figura da célula 4">
 <h2>Parte 2 – Distribuição Normal e seus Parâmetros</h2>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'>from scipy.stats import norm
 
 x = np.linspace(-10, 10, 1000)
@@ -87,7 +84,6 @@ plt.show()</code></pre>
 <pre><code><Figure size 1000x500 with 1 Axes></code></pre>
 <img src="images/output_2.png" alt="Figura da célula 6">
 <h2>Parte 3 – Padronização da Normal (Z-score)</h2>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'># Gerar dados normais
 original = np.random.normal(loc=50, scale=10, size=1000)
 # Padronização
@@ -102,7 +98,6 @@ plt.show()</code></pre>
 <pre><code><Figure size 640x480 with 1 Axes></code></pre>
 <img src="images/output_3.png" alt="Figura da célula 8">
 <h2>Parte 4 – Teorema do Limite Central</h2>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'># Distribuição não normal (exponencial)
 pop = np.random.exponential(scale=2.0, size=100000)
 
@@ -123,7 +118,6 @@ plt.show()</code></pre>
 <pre><code><Figure size 640x480 with 1 Axes></code></pre>
 <img src="images/output_4.png" alt="Figura da célula 10">
 <h3>Normalizando a curva podemos comparar com o que seria esperado teoricamente</h3>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'>from scipy.stats import norm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -156,7 +150,6 @@ plt.show()
 <pre><code><Figure size 1000x600 with 1 Axes></code></pre>
 <img src="images/output_5.png" alt="Figura da célula 12">
 <h2>Parte 5 – Erro Padrão da Média</h2>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'># Comparando desvio padrão e erro padrão
 n = 50
 amostras = [np.mean(np.random.choice(pop, size=n)) for _ in range(1000)]
@@ -169,7 +162,6 @@ print(f'Erro padrão teórico: {erro_teorico:.4f}')</code></pre>
 <pre><code>Desvio padrão das médias amostrais (estimado): 0.2881
 Erro padrão teórico: 0.2801
 </code></pre>
-<p>Observe o que este código realiza. Ele pode processar, calcular ou visualizar algum aspecto dos dados:</p>
 <pre><code class='language-python'></code></pre>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
