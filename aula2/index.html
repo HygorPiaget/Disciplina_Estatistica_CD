@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 2 - Estatística para Ciência de Dados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Aula 2 - Estatística para Ciência de Dados</h1>
+<p>Esta página apresenta o conteúdo da segunda aula da disciplina, com explicações, códigos, saídas e visualizações baseadas no notebook original.</p>
+<h1>Aula 2 – Estatística para Ciência de Dados</h1>
+<p></p>
+<h2>Medidas de Tendência Central e Dispersão</h2>
+<p>Nesta aula, vamos aprofundar nosso entendimento das medidas de tendência central e variabilidade, usando dados simulados e reais.</p>
+<h2>Parte 1 – Medidas de Tendência Central com Dados Simulados</h2>
+<p></p>
+<p>Vamos gerar pequenas amostras de números aleatórios seguindo uma distribuição normal e calcular:</p>
+<p></p>
+<li>Média</li>
+<li>Mediana</li>
+<li>Moda</li>
+<p></p>
+<p>Execute mais de uma vez para ver como os resultados mudam com diferentes amostras.</p>
+<pre><code class='language-python'>import numpy as np
+import pandas as pd
+from scipy import stats
+
+np.random.seed(42)  # Para reprodutibilidade
+
+# Gerando uma amostra pequena
+dados = np.random.normal(loc=50, scale=10, size=10)
+print("Amostra:", dados)
+
+# Calculando medidas de tendência central
+media = np.mean(dados)
+mediana = np.median(dados)
+moda = stats.mode(dados, keepdims=False).mode
+
+print(f"Média: {media:.2f}")
+print(f"Mediana: {mediana:.2f}")
+print(f"Moda: {moda:.2f}")</code></pre>
+<pre><code>Amostra: [54.96714153 48.61735699 56.47688538 65.23029856 47.65846625 47.65863043
+ 65.79212816 57.67434729 45.30525614 55.42560044]
+Média: 54.48
+Mediana: 55.20
+Moda: 45.31
+</code></pre>
+<h3>Experimente:</h3>
+<li>Mude o valor de `size` para 30, 50 ou 100 e observe o que acontece.</li>
+<li>Rode a célula várias vezes e veja como os valores mudam.</li>
+<h2>Parte 2 – Medidas de Dispersão com Dados Simulados</h2>
+<p></p>
+<p>Agora vamos calcular:</p>
+<li>Variância</li>
+<li>Desvio padrão</li>
+<li>Coeficiente de variação (CV)</li>
+<pre><code class='language-python'># Medidas de dispersão
+variancia = np.var(dados, ddof=1)  # ddof=1 para amostra
+desvio_padrao = np.std(dados, ddof=1)
+coef_var = desvio_padrao / media
+
+print(f"Variância: {variancia:.2f}")
+print(f"Desvio padrão: {desvio_padrao:.2f}")
+print(f"Coeficiente de variação: {coef_var:.2%}")</code></pre>
+<pre><code>Variância: 52.27
+Desvio padrão: 7.23
+Coeficiente de variação: 13.27%
+</code></pre>
+<h2>Parte 3 – Usando Dados Reais: População das Cidades Brasileiras</h2>
+<p></p>
+<p>Nesta etapa, vamos usar um dataset com dados reais de população das cidades brasileiras. Calcule as mesmas medidas de tendência central e dispersão.</p>
+<pre><code class='language-python'># Leitura correta do CSV com header na linha 2
+import pandas as pd
+import matplotlib.pyplot as plt
+
+arquivo = 'ipeadata[31-03-2025-03-06].csv'
+df = pd.read_csv(arquivo, header=1)
+df.head()</code></pre>
+<pre><code>  Sigla   Código     Município     2000     2007     2010     2022  Unnamed: 7
+0    AC  1200013    Acrelândia   7935.0  11520.0  12538.0  14021.0         NaN
+1    AC  1200054  Assis Brasil   3490.0   5351.0   6072.0   8100.0         NaN
+2    AC  1200104     Brasiléia  17013.0  19065.0  21398.0  26000.0         NaN
+3    AC  1200138        Bujari   5826.0   6543.0   8471.0  12917.0         NaN
+4    AC  1200179      Capixaba   5206.0   8446.0   8798.0  10392.0         NaN</code></pre>
+<pre><code class='language-python'># Selecionar e limpar os dados de população de 2022
+pop_2022 = df['2022'].dropna()
+print(f"Total de municípios: {len(pop_2022)}")
+pop_2022.describe()</code></pre>
+<pre><code>Total de municípios: 5570
+</code></pre>
+<pre><code>count    5.570000e+03
+mean     3.645974e+04
+std      2.065187e+05
+min      8.330000e+02
+25%      5.228000e+03
+50%      1.106500e+04
+75%      2.442725e+04
+max      1.145200e+07
+Name: 2022, dtype: float64</code></pre>
+<pre><code class='language-python'># Medidas estatísticas
+media = pop_2022.mean()
+mediana = pop_2022.median()
+moda = pop_2022.mode()[0]
+variancia = pop_2022.var()
+desvio = pop_2022.std()
+cv = desvio / media
+
+print(f"Média: {media:,.2f}")
+print(f"Mediana: {mediana:,.2f}")
+print(f"Moda: {moda:,.2f}")
+print(f"Variância: {variancia:,.2f}")
+print(f"Desvio padrão: {desvio:,.2f}")
+print(f"Coeficiente de variação: {cv:.2%}")</code></pre>
+<pre><code>Média: 36,459.74
+Mediana: 11,065.00
+Moda: 2,946.00
+Variância: 42,649,984,299.46
+Desvio padrão: 206,518.73
+Coeficiente de variação: 566.43%
+</code></pre>
+<pre><code class='language-python'># Histograma
+plt.figure(figsize=(10, 5))
+plt.hist(pop_2022, bins=50, color='skyblue', edgecolor='black')
+plt.title('Distribuição da População dos Municípios Brasileiros (2022)')
+plt.xlabel('População')
+plt.ylabel('Frequência')
+plt.grid(True)
+plt.show()
+
+# Histograma em LogLog
+plt.figure(figsize=(10, 5))
+plt.hist(pop_2022, bins=50, color='skyblue', edgecolor='black')
+plt.title('LogLog Distribuição da População dos Municípios Brasileiros (2022)')
+plt.loglog()
+plt.xlabel('População')
+plt.ylabel('Frequência')
+plt.grid(True)
+plt.show()</code></pre>
+<pre><code><Figure size 1000x500 with 1 Axes></code></pre>
+<img src="images/output_0.png" alt="Figura da célula 10">
+<pre><code><Figure size 1000x500 with 1 Axes></code></pre>
+<img src="images/output_1.png" alt="Figura da célula 10">
+<pre><code class='language-python'># Calculando as medidas novamente
+media = pop_2022.mean()
+mediana = pop_2022.median()
+moda = pop_2022.mode()[0]
+
+# Histograma normal
+plt.figure(figsize=(10, 5))
+plt.hist(pop_2022, bins=50, color='skyblue', edgecolor='black')
+plt.axvline(media, color='red', linestyle='--', linewidth=2, label=f'Média: {media:,.0f}')
+plt.axvline(mediana, color='green', linestyle='-.', linewidth=2, label=f'Mediana: {mediana:,.0f}')
+plt.axvline(moda, color='orange', linestyle=':', linewidth=2, label=f'Moda: {moda:,.0f}')
+plt.title('Distribuição da População dos Municípios Brasileiros (2022)')
+plt.xlabel('População')
+plt.ylabel('Frequência')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Histograma com escala log-log
+plt.figure(figsize=(10, 5))
+plt.hist(pop_2022, bins=50, color='skyblue', edgecolor='black')
+plt.axvline(media, color='red', linestyle='--', linewidth=2, label=f'Média: {media:,.0f}')
+plt.axvline(mediana, color='green', linestyle='-.', linewidth=2, label=f'Mediana: {mediana:,.0f}')
+plt.axvline(moda, color='orange', linestyle=':', linewidth=2, label=f'Moda: {moda:,.0f}')
+plt.xscale('log')
+plt.yscale('log')
+plt.title('Distribuição Log-Log da População dos Municípios Brasileiros (2022)')
+plt.xlabel('População')
+plt.ylabel('Frequência')
+plt.legend()
+plt.grid(True, which="both", ls="--")
+plt.show()
+</code></pre>
+<pre><code><Figure size 1000x500 with 1 Axes></code></pre>
+<img src="images/output_2.png" alt="Figura da célula 11">
+<pre><code><Figure size 1000x500 with 1 Axes></code></pre>
+<img src="images/output_3.png" alt="Figura da célula 11">
+<h2>Parte 4 – Covariância e Correlação entre População e Eleitorado</h2>
+<p></p>
+<p>Agora vamos explorar como duas variáveis se relacionam: a **população total** e o **número de eleitores** de cada município brasileiro.</p>
+<p></p>
+<h3>Conceitos:</h3>
+<li>**Covariância** mede se duas variáveis aumentam ou diminuem juntas (mas não é normalizada);</li>
+<li>**Coeficiente de correlação de Pearson** varia entre -1 e 1 e mede **intensidade e direção da relação linear**.</li>
+<pre><code class='language-python'># Recarregando os dois arquivos com as colunas corretas
+pop = pd.read_csv('ipeadata[31-03-2025-03-06].csv', header=1)
+eleitores = pd.read_csv('ipeadata[31-03-2025-04-00]_eleitorado.csv', sep=';', header=1)
+
+# Selecionar colunas relevantes
+df_pop = pop[['Código', 'Município', '2022']].rename(columns={'2022': 'Populacao'})
+df_eleitores = eleitores[['Código', '2022']].rename(columns={'2022': 'Eleitorado'})
+
+# Juntar pelo código do município
+df_merged = pd.merge(df_pop, df_eleitores, on='Código')
+
+# Remover ausências e garantir tipos numéricos
+df_merged = df_merged.dropna()
+df_merged['Populacao'] = pd.to_numeric(df_merged['Populacao'], errors='coerce')
+df_merged['Eleitorado'] = pd.to_numeric(df_merged['Eleitorado'], errors='coerce')
+df_merged = df_merged.dropna()
+df_merged.head()</code></pre>
+<pre><code>    Código     Município  Populacao  Eleitorado
+0  1200013    Acrelândia    14021.0      9521.0
+1  1200054  Assis Brasil     8100.0      6389.0
+2  1200104     Brasiléia    26000.0     18192.0
+3  1200138        Bujari    12917.0      9947.0
+4  1200179      Capixaba    10392.0      7836.0</code></pre>
+<pre><code class='language-python'># Cálculo da covariância e correlação
+cov = df_merged['Populacao'].cov(df_merged['Eleitorado'])
+corr = df_merged['Populacao'].corr(df_merged['Eleitorado'])
+
+print(f"Covariância: {cov:,.2f}")
+print(f"Coeficiente de correlação de Pearson: {corr:.4f}")</code></pre>
+<pre><code>Covariância: 33,960,675,818.86
+Coeficiente de correlação de Pearson: 0.9986
+</code></pre>
+<pre><code class='language-python'># Gráfico de dispersão com linha de tendência
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(10, 6))
+#sns.regplot(data=df_merged, x='Populacao', y='Eleitorado', scatter_kws={'alpha':0.5})
+plt.plot(df_merged.Populacao,df_merged.Eleitorado,"ro")
+#plt.plot(np.linspace(100,1e7),np.linspace(100,1e7),"--")
+plt.title('Correlação entre População e Eleitorado (2022)')
+plt.xlabel('População do Município')
+plt.ylabel('Número de Eleitores')
+plt.loglog()
+plt.grid(True)
+plt.show()</code></pre>
+<pre><code><Figure size 1000x600 with 1 Axes></code></pre>
+<img src="images/output_4.png" alt="Figura da célula 15">
+<pre><code class='language-python'></code></pre>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
