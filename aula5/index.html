@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 5 - Estatística para Ciência de Dados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Aula 5 - Estatística para Ciência de Dados</h1>
+<p>Nesta quinta aula, você encontrará códigos comentados, saídas e gráficos que aprofundam os temas já trabalhados em aulas anteriores com novos exemplos e desafios.</p>
+<h1>Aula 5 – Estimativas e Intervalos de Confiança</h1>
+<p>Nesta aula vamos trabalhar com o conceito de intervalo de confiança, aplicado a médias amostrais.</p>
+<p>Vamos explorar o que significa estimar um valor, e como podemos melhorar essa estimativa usando intervalos em vez de apenas um ponto.</p>
+<h2>Parte 1 – Estimativa Pontual vs Intervalar</h2>
+
+<pre><code class='language-python'>import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+# Simular população com média conhecida
+pop = np.random.normal(loc=100, scale=15, size=100000)
+mu = np.mean(pop)
+sigma = np.std(pop)
+
+# Sorteando uma amostra
+np.random.seed(42)
+amostra = np.random.choice(pop, size=50)
+media = np.mean(amostra)
+erro_padrao = sigma / np.sqrt(len(amostra))
+
+# Intervalo de confiança 95%
+z = 1.96
+lim_inf = media - z * erro_padrao
+lim_sup = media + z * erro_padrao
+
+print(f"Estimativa pontual da média: {media:.2f}")
+print(f"Intervalo de confiança 95%: [{lim_inf:.2f}, {lim_sup:.2f}]")
+print(f"Média real da população: {mu:.2f}")</code></pre>
+<pre><code>Estimativa pontual da média: 103.10
+Intervalo de confiança 95%: [98.94, 107.25]
+Média real da população: 100.04
+</code></pre>
+<h2>Parte 2 – Variação do Nível de Confiança</h2>
+
+<pre><code class='language-python'># Comparar diferentes níveis de confiança
+for conf, z in [(90, 1.645), (95, 1.96), (99, 2.576)]:
+    lim_inf = media - z * erro_padrao
+    lim_sup = media + z * erro_padrao
+    print(f"{conf}% de confiança: [{lim_inf:.2f}, {lim_sup:.2f}]")</code></pre>
+<pre><code>90% de confiança: [99.61, 106.58]
+95% de confiança: [98.94, 107.25]
+99% de confiança: [97.64, 108.55]
+</code></pre>
+<h2>Parte 3 – Efeito do Tamanho da Amostra</h2>
+
+<pre><code class='language-python'># Comparar intervalos com diferentes tamanhos de amostra
+for n in [10, 30, 100, 500]:
+    amostra = np.random.choice(pop, size=n)
+    m = np.mean(amostra)
+    ep = sigma / np.sqrt(n)
+    z = 1.96
+    li = m - z * ep
+    ls = m + z * ep
+    print(f"n={n:<3} -> IC 95%: [{li:.2f}, {ls:.2f}], largura: {ls-li:.2f}")</code></pre>
+<pre><code>n=10  -> IC 95%: [90.83, 109.40], largura: 18.57
+n=30  -> IC 95%: [95.69, 106.41], largura: 10.72
+n=100 -> IC 95%: [96.73, 102.60], largura: 5.87
+n=500 -> IC 95%: [97.50, 100.13], largura: 2.63
+</code></pre>
+<h2>Como que a largura varia em funcao do tamanho da amostra n?</h2>
+<h2>Faça um grafico!</h2>
+<h2>Parte 4 – Intervalo de Confiança com Dados Reais</h2>
+
+<pre><code class='language-python'>import pandas as pd
+# Carregando dados reais
+df = pd.read_csv("ipeadata[31-03-2025-03-06].csv", header=1)
+df = df[['Município', '2022']].dropna()
+df.columns = ['Municipio', 'Populacao']
+pop_real = df['Populacao'].values
+
+# Amostragem
+amostra_real = np.random.choice(pop_real, size=50)
+media_real = np.mean(amostra_real)
+erro_padrao_real = np.std(amostra_real, ddof=1) / np.sqrt(50)
+
+# Intervalo de confiança
+z = 1.96
+lim_inf = media_real - z * erro_padrao_real
+lim_sup = media_real + z * erro_padrao_real
+
+print(f"IC 95% da média populacional (amostra): [{lim_inf:.2f}, {lim_sup:.2f}]")
+print(f"Média total da população: {np.mean(pop_real):.2f}")</code></pre>
+<pre><code>IC 95% da média populacional (amostra): [-3553.18, 78194.06]
+Média total da população: 36459.74
+</code></pre>
+<h2>Voce nota algo estranho nesse caso? comente sobre o tamanho do intervalo de confianca e como o intervalo para cada realizacao!!</h2>
+<h2>Parte 5 – Exercício Final: Cobertura do Intervalo de Confiança</h2>
+
+<pre><code class='language-python'># Repetir o cálculo do intervalo de confiança 100 vezes e ver quantos contêm a média real
+
+# Caso com Populacao do Brasil
+
+n = 50
+mu_real = np.mean(pop_real)
+acertos = 0
+
+for _ in range(100):
+    a = np.random.choice(pop_real, size=n)
+    m = np.mean(a)
+    ep = np.std(a, ddof=1) / np.sqrt(n)
+    li = m - 1.96 * ep
+    ls = m + 1.96 * ep
+    if li <= mu_real <= ls:
+        acertos += 1
+
+print(f"Número de intervalos que contêm a média real: {acertos}/100")
+print(f"Cobertura empírica: {acertos}%")</code></pre>
+<pre><code>Número de intervalos que contêm a média real: 69/100
+Cobertura empírica: 69%
+</code></pre>
+
+<pre><code class='language-python'># Repetir o cálculo do intervalo de confiança 100 vezes e ver quantos contêm a média real
+
+# Caso com dados em Gaussiana
+
+
+pop = np.random.normal(loc=100, scale=15, size=100000)
+n = 50
+mu_real = np.mean(pop)
+acertos = 0
+
+for _ in range(100):
+    a = np.random.choice(pop, size=n)
+    m = np.mean(a)
+    ep = np.std(a, ddof=1) / np.sqrt(n)
+    li = m - 1.96 * ep
+    ls = m + 1.96 * ep
+    if li <= mu_real <= ls:
+        acertos += 1
+
+print(f"Número de intervalos que contêm a média real: {acertos}/100")
+print(f"Cobertura empírica: {acertos}%")</code></pre>
+<pre><code>Número de intervalos que contêm a média real: 94/100
+Cobertura empírica: 94%
+</code></pre>
+<h2>Por que sao tao diferentes?</h2>
+
+<pre><code class='language-python'></code></pre>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
