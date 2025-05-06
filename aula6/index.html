@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 6 - Estatística para Ciência de Dados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Aula 6 – Distribuição t e Intervalos com Variância Desconhecida</h1>
+<p>Nesta aula prática vamos utilizar a distribuição t de Student para calcular intervalos de confiança quando a variância populacional é desconhecida, incluindo casos com duas amostras e amostras dependentes.</p>
+<h2>Parte 1 – Comparação entre Intervalos com Z e com t</h2>
+<pre><code class='language-python'>import numpy as np
+import scipy.stats as stats
+
+# População normal simulada
+np.random.seed(42)
+pop = np.random.normal(loc=50, scale=10, size=100000)
+
+# Amostra pequena
+amostra = np.random.choice(pop, size=10)
+media = np.mean(amostra)
+s = np.std(amostra, ddof=1)
+n = len(amostra)
+
+# IC com Z (assumindo sigma conhecido)
+z = 1.96
+sigma_conhecido = 10
+erro_z = z * sigma_conhecido / np.sqrt(n)
+ic_z = (media - erro_z, media + erro_z)
+
+# IC com t (estimando s)
+t = stats.t.ppf(0.975, df=n-1)
+erro_t = t * s / np.sqrt(n)
+ic_t = (media - erro_t, media + erro_t)
+
+print(f"Intervalo com Z: {ic_z}")
+print(f"Intervalo com t: {ic_t}")</code></pre>
+<pre><code>Intervalo com Z: (48.476762005838495, 60.872890433698544)
+Intervalo com t: (49.450674605606196, 59.89897783393084)
+</code></pre>
+<h2>Parte 2 – Intervalo de Confiança com t (uma amostra)</h2>
+
+<pre><code class='language-python'># Simular amostra de alturas
+alturas = np.random.normal(loc=170, scale=8, size=25)
+media_altura = np.mean(alturas)
+s_altura = np.std(alturas, ddof=1)
+n = len(alturas)
+t_val = stats.t.ppf(0.975, df=n-1)
+erro = t_val * s_altura / np.sqrt(n)
+ic = (media_altura - erro, media_altura + erro)
+
+print(f"Intervalo de confiança 95%: {ic}")</code></pre>
+<pre><code>Intervalo de confiança 95%: (168.0771730825017, 175.09386704125455)
+</code></pre>
+<h2>Parte 3 – Intervalo de Confiança para Diferença de Médias (Independentes)</h2>
+
+<pre><code class='language-python'># Simular dados de dois grupos
+grupoA = np.random.normal(loc=100, scale=15, size=30)
+grupoB = np.random.normal(loc=95, scale=20, size=30)
+
+mediaA = np.mean(grupoA)
+mediaB = np.mean(grupoB)
+sA = np.std(grupoA, ddof=1)
+sB = np.std(grupoB, ddof=1)
+
+# Intervalo sem assumir variâncias iguais (Welch)
+se = np.sqrt((sA**2)/30 + (sB**2)/30)
+df = ((sA**2/30 + sB**2/30)**2) / (((sA**2/30)**2)/29 + ((sB**2/30)**2)/29)
+t_val = stats.t.ppf(0.975, df=df)
+erro = t_val * se
+ic_dif = ((mediaA - mediaB) - erro, (mediaA - mediaB) + erro)
+
+print(f"Intervalo da diferença de médias (sem variância igual): {ic_dif}")</code></pre>
+<pre><code>Intervalo da diferença de médias (sem variância igual): (-4.609983870001351, 11.354562241077026)
+</code></pre>
+<h2>Parte 4 – Intervalo de Confiança para Diferenças em Pares (Dependentes)</h2>
+
+<pre><code class='language-python'># Simular pares (antes e depois)
+antes = np.random.normal(loc=70, scale=5, size=20)
+depois = antes + np.random.normal(loc=-2, scale=3, size=20)
+
+diferencas = depois - antes
+media_dif = np.mean(diferencas)
+sd_dif = np.std(diferencas, ddof=1)
+n = len(diferencas)
+t_val = stats.t.ppf(0.975, df=n-1)
+erro = t_val * sd_dif / np.sqrt(n)
+ic_dif = (media_dif - erro, media_dif + erro)
+
+print(f"IC 95% para diferença de médias (dependentes): {ic_dif}")</code></pre>
+<pre><code>IC 95% para diferença de médias (dependentes): (-4.7362228139579265, -2.0123306422674627)
+</code></pre>
+<h2>Parte 5 – Exercício Final</h2>
+<p>Simule duas amostras de grupos distintos (ex: dois produtos, dois métodos de ensino).</p>
+<li>Verifique visualmente a distribuição dos dados.</li>
+<li>Teste se é adequado assumir variâncias iguais.</li>
+<li>Calcule o intervalo de confiança da diferença de médias com o método apropriado.</li>
+<li>Interprete o intervalo: a diferença é estatisticamente significativa?</li>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
